@@ -1,18 +1,27 @@
 import React, { useState, useEffect } from "react";
 import Blog from "./components/Blog";
 import CreateBlog from "./components/CreateBlog";
+import Notification from "./components/Notification";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
+import "./App.css";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState(null);
-  const [errorMessage, setErrorMessage] = useState(null);
   const [username, setUsername] = useState([""]);
   const [password, setPassword] = useState([""]);
   const [newTitle, setNewTitle] = useState("");
   const [newAuthor, setNewAuthor] = useState("");
   const [newUrl, setNewUrl] = useState("");
+  const [notify, setNotify] = useState({ message: "", messageType: null });
+
+  const notification = (message, messageType) => {
+    setNotify({ message, messageType });
+    setTimeout(() => {
+      setNotify({ message: "", messageType: null });
+    }, 3000);
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -23,10 +32,7 @@ const App = () => {
       setUsername("");
       setPassword("");
     } catch (exception) {
-      setErrorMessage("Wrong credentials");
-      setTimeout(() => {
-        setErrorMessage(null);
-      }, 5000);
+      notification("wrong username or password", "error");
     }
   };
 
@@ -53,6 +59,10 @@ const App = () => {
       url: newUrl,
     });
     setBlogs(blogs.concat(newBlog));
+    notification(
+      `new blog ${newBlog.title} by ${newBlog.author} added`,
+      "notif"
+    );
     setNewTitle("");
     setNewAuthor("");
     setNewUrl("");
@@ -90,8 +100,11 @@ const App = () => {
         <p>{user.name} logged in</p>
         <button onClick={() => handleLogout()}>logout</button>
         <CreateBlog
+          title={newTitle}
           handleChangeTitle={handleChangeTitle}
+          author={newAuthor}
           handleChangeAuthor={handleChangeAuthor}
+          url={newUrl}
           handleChangeUrl={handleChangeUrl}
           handleSubmit={submitBlog}
         />
@@ -117,6 +130,7 @@ const App = () => {
 
   return (
     <div>
+      <Notification message={notify.message} messageType={notify.messageType} />
       {user === null && loginView()}
       {user !== null && blogView()}
     </div>
