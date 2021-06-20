@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Blog from "./components/Blog";
+import CreateBlog from "./components/CreateBlog";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 
@@ -9,6 +10,9 @@ const App = () => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [username, setUsername] = useState([""]);
   const [password, setPassword] = useState([""]);
+  const [newTitle, setNewTitle] = useState("");
+  const [newAuthor, setNewAuthor] = useState("");
+  const [newUrl, setNewUrl] = useState("");
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -29,6 +33,29 @@ const App = () => {
   const handleLogout = () => {
     window.localStorage.removeItem("loggedBlogappUser");
     window.location.reload();
+  };
+
+  const handleChangeTitle = (e) => {
+    setNewTitle(e.target.value);
+  };
+  const handleChangeAuthor = (e) => {
+    setNewAuthor(e.target.value);
+  };
+  const handleChangeUrl = (e) => {
+    setNewUrl(e.target.value);
+  };
+
+  const submitBlog = async (e) => {
+    e.preventDefault();
+    const newBlog = await blogService.create({
+      title: newTitle,
+      author: newAuthor,
+      url: newUrl,
+    });
+    setBlogs(blogs.concat(newBlog));
+    setNewTitle("");
+    setNewAuthor("");
+    setNewUrl("");
   };
 
   const loginView = () => {
@@ -62,6 +89,12 @@ const App = () => {
         <h2>blogs</h2>
         <p>{user.name} logged in</p>
         <button onClick={() => handleLogout()}>logout</button>
+        <CreateBlog
+          handleChangeTitle={handleChangeTitle}
+          handleChangeAuthor={handleChangeAuthor}
+          handleChangeUrl={handleChangeUrl}
+          handleSubmit={submitBlog}
+        />
         {blogs.map((blog) => (
           <Blog key={blog.id} blog={blog} />
         ))}
