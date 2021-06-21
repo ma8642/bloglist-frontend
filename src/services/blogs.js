@@ -5,6 +5,7 @@ const baseUrl = "/api/blogs";
 let token = null;
 const setToken = (newToken) => {
   token = `bearer ${newToken}`;
+  console.log(token);
 };
 
 const getAll = () => {
@@ -13,6 +14,7 @@ const getAll = () => {
 };
 
 const create = async (newObject) => {
+  console.log("token is:", token);
   const config = {
     headers: { Authorization: token },
   };

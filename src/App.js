@@ -1,20 +1,19 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Blog from "./components/Blog";
 import CreateBlog from "./components/CreateBlog";
 import Notification from "./components/Notification";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 import "./App.css";
+import Togglable from "./components/Togglable";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState(null);
   const [username, setUsername] = useState([""]);
   const [password, setPassword] = useState([""]);
-  const [newTitle, setNewTitle] = useState("");
-  const [newAuthor, setNewAuthor] = useState("");
-  const [newUrl, setNewUrl] = useState("");
   const [notify, setNotify] = useState({ message: "", messageType: null });
+  const blogFormRef = useRef();
 
   const notification = (message, messageType) => {
     setNotify({ message, messageType });
@@ -27,6 +26,7 @@ const App = () => {
     e.preventDefault();
     try {
       const user = await loginService.login({ username, password });
+      blogService.setToken(user.token);
       window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
       setUser(user);
       setUsername("");
@@ -41,31 +41,14 @@ const App = () => {
     window.location.reload();
   };
 
-  const handleChangeTitle = (e) => {
-    setNewTitle(e.target.value);
-  };
-  const handleChangeAuthor = (e) => {
-    setNewAuthor(e.target.value);
-  };
-  const handleChangeUrl = (e) => {
-    setNewUrl(e.target.value);
-  };
-
-  const submitBlog = async (e) => {
-    e.preventDefault();
-    const newBlog = await blogService.create({
-      title: newTitle,
-      author: newAuthor,
-      url: newUrl,
-    });
+  const addBlog = async (blogObject) => {
+    blogFormRef.current.toggleVisibility();
+    const newBlog = await blogService.create(blogObject);
     setBlogs(blogs.concat(newBlog));
     notification(
       `new blog ${newBlog.title} by ${newBlog.author} added`,
       "notif"
     );
-    setNewTitle("");
-    setNewAuthor("");
-    setNewUrl("");
   };
 
   const loginView = () => {
@@ -99,15 +82,9 @@ const App = () => {
         <h2>blogs</h2>
         <p>{user.name} logged in</p>
         <button onClick={() => handleLogout()}>logout</button>
-        <CreateBlog
-          title={newTitle}
-          handleChangeTitle={handleChangeTitle}
-          author={newAuthor}
-          handleChangeAuthor={handleChangeAuthor}
-          url={newUrl}
-          handleChangeUrl={handleChangeUrl}
-          handleSubmit={submitBlog}
-        />
+        <Togglable buttonLabel="create new blog" ref={blogFormRef}>
+          <CreateBlog createBlog={addBlog} />
+        </Togglable>
         {blogs.map((blog) => (
           <Blog key={blog.id} blog={blog} />
         ))}
