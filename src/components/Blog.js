@@ -1,13 +1,24 @@
 import React, { useState } from "react";
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, updateBlog }) => {
   const [showDetails, setShowDetails] = useState(false);
   let buttonTitle = showDetails ? "hide" : "view";
+
+  const addLike = async (e) => {
+    await updateBlog(blog.id, {
+      user: blog.user.id,
+      likes: blog.likes + 1,
+      author: blog.author,
+      title: blog.title,
+      url: blog.url,
+    });
+  };
 
   const details = (
     <div>
       {blog.url} <br />
-      likes {blog.likes} <br />
+      likes {blog.likes} <button onClick={() => addLike()}>like</button>
+      <br />
       {blog.user.name} <br />
     </div>
   );

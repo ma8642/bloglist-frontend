@@ -51,6 +51,18 @@ const App = () => {
     );
   };
 
+  const addLike = async (blogID, blogObject) => {
+    const newBlog = await blogService.update(blogID, blogObject);
+    console.log(newBlog);
+    setBlogs(
+      blogs.map((blog) =>
+        blog.url === blogObject.url
+          ? { ...blog, likes: blogObject.likes }
+          : blog
+      )
+    );
+  };
+
   const loginView = () => {
     return (
       <form onSubmit={handleLogin}>
@@ -86,7 +98,7 @@ const App = () => {
           <CreateBlog createBlog={addBlog} />
         </Togglable>
         {blogs.map((blog) => (
-          <Blog key={blog.id} blog={blog} />
+          <Blog key={blog.id} blog={blog} updateBlog={addLike} />
         ))}
       </div>
     );
