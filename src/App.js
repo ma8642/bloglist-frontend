@@ -63,6 +63,17 @@ const App = () => {
     );
   };
 
+  const remove = async (blogToDelete) => {
+    if (
+      window.confirm(
+        `Remove blog ${blogToDelete.title} by ${blogToDelete.author}`
+      )
+    ) {
+      await blogService.remove(blogToDelete.id);
+      setBlogs(blogs.filter((blog) => blog.id !== blogToDelete.id));
+    }
+  };
+
   const loginView = () => {
     return (
       <form onSubmit={handleLogin}>
@@ -100,7 +111,12 @@ const App = () => {
         {blogs
           .sort((blogA, blogB) => blogA.likes < blogB.likes)
           .map((blog) => (
-            <Blog key={blog.id} blog={blog} updateBlog={addLike} />
+            <Blog
+              key={blog.id}
+              blog={blog}
+              updateBlog={addLike}
+              removeBlog={remove}
+            />
           ))}
       </div>
     );

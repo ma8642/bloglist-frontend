@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const Blog = ({ blog, updateBlog }) => {
+const Blog = ({ blog, updateBlog, removeBlog }) => {
   const [showDetails, setShowDetails] = useState(false);
   let buttonTitle = showDetails ? "hide" : "view";
 
@@ -14,12 +14,17 @@ const Blog = ({ blog, updateBlog }) => {
     });
   };
 
+  const remove = async (e) => {
+    await removeBlog(blog);
+  };
+
   const details = (
     <div>
       {blog.url} <br />
       likes {blog.likes} <button onClick={() => addLike()}>like</button>
       <br />
       {blog.user.name} <br />
+      <button onClick={() => remove()}>remove</button>
     </div>
   );
 
