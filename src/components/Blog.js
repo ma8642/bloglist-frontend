@@ -4,7 +4,7 @@ const Blog = ({ blog, updateBlog, removeBlog, userName }) => {
   const [showDetails, setShowDetails] = useState(false);
   let buttonTitle = showDetails ? "hide" : "view";
 
-  const addLike = async (e) => {
+  const addLike = async () => {
     await updateBlog(blog.id, {
       user: blog.user.id,
       likes: blog.likes + 1,
@@ -14,7 +14,7 @@ const Blog = ({ blog, updateBlog, removeBlog, userName }) => {
     });
   };
 
-  const remove = async (e) => {
+  const remove = async () => {
     await removeBlog(blog);
   };
 
