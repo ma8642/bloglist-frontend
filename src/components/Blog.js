@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const Blog = ({ blog, updateBlog, removeBlog }) => {
+const Blog = ({ blog, updateBlog, removeBlog, userName }) => {
   const [showDetails, setShowDetails] = useState(false);
   let buttonTitle = showDetails ? "hide" : "view";
 
@@ -24,7 +24,9 @@ const Blog = ({ blog, updateBlog, removeBlog }) => {
       likes {blog.likes} <button onClick={() => addLike()}>like</button>
       <br />
       {blog.user.name} <br />
-      <button onClick={() => remove()}>remove</button>
+      {blog.user.name === userName && (
+        <button onClick={() => remove()}>remove</button>
+      )}
     </div>
   );
 
