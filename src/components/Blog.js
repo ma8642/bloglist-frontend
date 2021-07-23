@@ -19,7 +19,7 @@ const Blog = ({ blog, updateBlog, removeBlog, userName }) => {
   };
 
   const details = (
-    <div>
+    <div className="blog-more-details-div">
       {blog.url} <br />
       likes {blog.likes} <button onClick={() => addLike()}>like</button>
       <br />
@@ -32,7 +32,9 @@ const Blog = ({ blog, updateBlog, removeBlog, userName }) => {
 
   return (
     <div className="blog-div">
-      {blog.title} {blog.author}{" "}
+      <div className="blog-title-author-div">
+        {blog.title} {blog.author}{" "}
+      </div>
       <button onClick={() => setShowDetails(!showDetails)}>
         {buttonTitle}
       </button>
